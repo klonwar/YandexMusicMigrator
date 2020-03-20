@@ -67,8 +67,6 @@ export default class Functions {
       let elem = await page.$(s);
       let link = await (await elem.getProperty("href")).jsonValue();
 
-      log(link);
-
       link = link.slice(0, -9);
 
       let nickname = "";
@@ -79,7 +77,6 @@ export default class Functions {
         i--;
       }
       link = link + 'tracks';
-      log(link);
       return {nickname, link};
     } catch (e) {
       log(e.message);
@@ -135,6 +132,17 @@ export default class Functions {
     } catch (e) {
       log("> No phone warning 2");
     }
+
+    s = `div[data-t="phone_actual_skip"] button`;
+    try {
+      await page.waitFor(s, {timeout: 2000}).then(() => {
+        page.click(s);
+      });
+      log("> Found phone warning 3");
+    } catch (e) {
+      log("> No phone warning 3");
+    }
+
     s = "#track_id";
     await page.waitFor(s);
   };

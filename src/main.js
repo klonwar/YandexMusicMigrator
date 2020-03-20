@@ -15,6 +15,7 @@ import Functions from "./functions";
   };
 
   let s, db = {};
+  const headless = true;
 
   try {
     log('--> Yandex.Music Migrator <--');
@@ -22,7 +23,7 @@ import Functions from "./functions";
 
     await Functions.writeDb(db);
 
-    let browser = await Puppeteer.launch({headless: false});
+    let browser = await Puppeteer.launch({headless});
     let page = await browser.newPage();
     let s_counter = 0;
 
@@ -48,7 +49,7 @@ import Functions from "./functions";
 
     log('- Reloggging in');
 
-    browser = await Puppeteer.launch({headless: false});
+    browser = await Puppeteer.launch({headless});
 
     page = await browser.newPage();
     await page.setViewport(vp);
@@ -115,3 +116,4 @@ import Functions from "./functions";
   }
 
 })();
+

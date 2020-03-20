@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build | node dist/main.js",
-    "exe": "npm run build | nexe -i dist/main.js -o build/ymmigrator.exe",
+    "start": "npm run build & node dist/main.js",
+    "exe": "npm run build & nexe -i dist/main.js -o build/ymmigrator.exe",
     "build": "babel ./src/**/*.js -d dist/"
   },
   "keywords": [],
