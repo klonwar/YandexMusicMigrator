@@ -91,7 +91,7 @@ export default class Functions {
     s = "#passp-field-login";
     await page.type(s, login);
 
-    s = ".passp-sign-in-button>.passp-form-button";
+    s = ".passp-sign-in-button > button[type='submit']";
     await page.click(s);
     log("> login inserted");
 
@@ -99,7 +99,7 @@ export default class Functions {
     await page.waitFor(s);
     await page.type(s, password);
 
-    s = "button.passp-form-button";
+    s = ".passp-sign-in-button > button[type='submit']";
     await page.click(s);
     log("> pw inserted");
 

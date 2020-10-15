@@ -15,7 +15,7 @@ import Functions from "./functions";
   };
 
   let s, db = {};
-  const headless = true;
+  const headless = false;
 
   try {
     log('--> Yandex.Music Migrator <--');
@@ -24,6 +24,10 @@ import Functions from "./functions";
     await Functions.writeDb(db);
 
     let browser = await Puppeteer.launch({headless});
+    let context = browser.defaultBrowserContext();
+    await context.overridePermissions(`https://yandex.ru/`, []);
+    await context.overridePermissions(`https://music.yandex.ru/`, []);
+    await context.overridePermissions(`https://passport.yandex.ru/`, []);
     let page = await browser.newPage();
     let s_counter = 0;
 
@@ -41,8 +45,18 @@ import Functions from "./functions";
     await page.goto(link, {waitUntil: "load"});
 
     const pageTemp = await browser.newPage();
-    const response = await pageTemp.goto("https://music.yandex.ru/handlers/library.jsx?owner=" + nickname + "&filter=tracks&likeFilter=favorite&sort=&dir=&lang=ru&external-domain=music.yandex.ru&overembed=false", {waitUntil: "load"});
+
+    const fetch = require(`node-fetch`);
+    const response = await fetch("https://music.yandex.ru/handlers/library.jsx?owner=" + nickname + "&filter=tracks&likeFilter=favorite&sort=&dir=&lang=ru&external-domain=music.yandex.ru&overembed=false", {
+      method: `GET`,
+      mode: `cors`,
+      headers: {
+        "Referer": `https://music.yandex.ru/users/${nickname}/tracks`
+      }
+    });
+
     let audiosObj = await response.json();
+    console.log(audiosObj);
     let audiosArr = audiosObj.contestTracksIds;
     await pageTemp.close();
     await browser.close();
@@ -50,7 +64,10 @@ import Functions from "./functions";
     log('- Reloggging in');
 
     browser = await Puppeteer.launch({headless});
-
+    context = browser.defaultBrowserContext();
+    await context.overridePermissions(`https://yandex.ru/`, []);
+    await context.overridePermissions(`https://music.yandex.ru/`, []);
+    await context.overridePermissions(`https://passport.yandex.ru/`, []);
     page = await browser.newPage();
     await page.setViewport(vp);
 
@@ -62,7 +79,7 @@ import Functions from "./functions";
     await linkPage.setViewport(vp);
     await linkPage.goto("https://music.yandex.ru/search?text=%D0%B4%D0%B5%D1%80%D0%B5%D0%B2%D0%BD%D1%8F%20%D0%B4%D1%83%D1%80%D0%B0%D0%BA%D0%BE%D0%B2", {waitUntil: "load"});
 
-    let token = "", num = "", i=0;
+    let token = "", num = "", i = 0;
     await linkPage.setRequestInterception(true);
     linkPage.on("request", request => {
       if (request.method() === "POST" && token === "") {
@@ -106,11 +123,13 @@ import Functions from "./functions";
     await linkPage.waitFor(5000);
     await linkPage.close();
 
+    log(JSON.stringify(audiosArr));
+
     audiosArr = audiosArr.reverse();
 
     log('- Inserting music');
 
-    Functions.musicAddCycle(audiosArr, audiosObj, 0, audiosArr.length - 1, browser);
+    Functions.musicAddCycle(audiosArr, audiosObj, 130, audiosArr.length - 1, browser);
   } catch (e) {
 
   }
