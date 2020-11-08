@@ -56,7 +56,7 @@ import Functions from "./functions";
     });
 
     let audiosObj = await response.json();
-    console.log(audiosObj);
+
     let audiosArr = audiosObj.contestTracksIds;
     await pageTemp.close();
     await browser.close();
@@ -129,7 +129,7 @@ import Functions from "./functions";
 
     log('- Inserting music');
 
-    Functions.musicAddCycle(audiosArr, audiosObj, 130, audiosArr.length - 1, browser);
+    Functions.musicAddCycle(audiosArr, audiosObj, 0, audiosArr.length - 1, browser);
   } catch (e) {
 
   }

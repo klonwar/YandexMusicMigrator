@@ -142,9 +142,6 @@ export default class Functions {
     } catch (e) {
       log("> No phone warning 3");
     }
-
-    s = "#track_id";
-    await page.waitFor(s);
   };
 
   static log = (s) => {
